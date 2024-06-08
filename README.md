@@ -21,35 +21,45 @@ of the booster+starship rocket.
 
 
  * used ffmpeg to sample an image every second from the video
-
+```
     ffmpeg -i Starship\'s\ Fourth\ Flight\ Test\ \[1OwxWYzDXjWGQ\].mp4 -vf "fps=1" f/output_%04d.png
+```
 
 
  * used tesseract to OCR each image
 
+```
     for f in f/*; do echo == $f == ; tesseract $f -; done > ocr-output.txt
+```
 
 
  * used filtertxt.py to extract values from ocr-output.txt
 
+```
     python3 filtertxt.py < ocr-output.txt > measurements.dat
+```
 
  * manually fixed some errors, like swapped columns, and obviously incorrect values.
 
  * used interpolate.py to linearly interpolate all missing values.
 
+```
     python3 interpolate.py < measurements.dat > interpolated.dat
-
+```
 
  * used kalman.py to estimate acceleration and speed from the measurements.
 
 NOTE that chatgpt wrote the kalman filter part for me.
 
+```
     python3 kalman.py < interpolated.dat > estimated.dat
+```
 
  * plot using ift4plot.py
 
+```
     python3 ift4plot.py < estimated.dat
+```
 
 ![ift4 plot](ift4.png)
 
