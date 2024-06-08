@@ -29,10 +29,34 @@ astarship = np.array([r[6] for r in recs if r[6] is not None])
 # Plot results
 fig = plt.figure()
 fig.subplots_adjust(wspace=0.08, left=0.1, right=0.85, top=0.95, hspace=0.3, bottom=0.05)
+gs = fig.add_gridspec(3, 2)
+
+# first starship and booster all in one plot, including the orbital part.
+axv_s = fig.add_subplot(gs.new_subplotspec((0,0), colspan=2))
+axv_s.set_title('Booster + Starship')
+axv_s.set_xlabel('Time [min]')
+axv_s.set_ylabel('Velocity (kmh)', color='blue')
+
+axv_s.plot(tbooster, vbooster, color='lightblue')
+axv_s.plot(tstarship, vstarship, color='blue')
+
+# second y axis
+axa_s = axv_s.twinx()
+axa_s.set_ylabel('Acceleration [g]', color='red')
+axa_s.plot(tbooster, abooster, color='lightcoral')
+axa_s.plot(tstarship, astarship, color='red')
+
+# third y axis
+axh_s = axv_s.twinx()
+axh_s.set_ylabel('Height [km]', color='green')
+axh_s.plot(tbooster, hbooster, color='lightgreen', linestyle=':')
+axh_s.plot(tstarship, hstarship, color='green', linestyle=':')
+axh_s.spines['right'].set_position(('axes', 1.08))
+
 
 #############
-# at the top, the booster plot
-axv_b = fig.add_subplot(3, 1, 1)
+# then the booster plot
+axv_b = fig.add_subplot(gs.new_subplotspec((1,0), colspan=2))
 axv_b.set_title('Booster')
 axv_b.set_xlabel('Time [min]')
 axv_b.set_ylabel('Velocity (kmh)', color='blue')
@@ -50,34 +74,13 @@ axh_b.plot(tbooster, hbooster, color='green', linestyle=':')
 axh_b.spines['right'].set_position(('axes', 1.08))
 
 
-# starship as one plot, including the coasting part.
-
-axv_s = fig.add_subplot(3, 1, 2)
-axv_s.set_title('Starship')
-axv_s.set_xlabel('Time [min]')
-axv_s.set_ylabel('Velocity (kmh)', color='blue')
-
-axv_s.plot(tstarship, vstarship, color='blue')
-
-# second y axis
-axa_s = axv_s.twinx()
-axa_s.set_ylabel('Acceleration [g]', color='red')
-axa_s.plot(tstarship, astarship, color='red')
-
-# third y axis
-axh_s = axv_s.twinx()
-axh_s.set_ylabel('Height [km]', color='green')
-axh_s.plot(tstarship, hstarship, color='green', linestyle=':')
-axh_s.spines['right'].set_position(('axes', 1.08))
-
-
 #############
 # next the starship plot, split in two parts.
-# excluding the orbital, coasting part.
+# excluding the orbital part.
 
 # first the launch/boost part
 
-axv_s1 = fig.add_subplot(3, 2, 5)
+axv_s1 = fig.add_subplot(gs.new_subplotspec((2,0)))
 axv_s1.set_title('Starship (boost)')
 axv_s1.set_xlabel('Time [min]')
 axv_s1.set_xlim(0, 10)
@@ -98,8 +101,7 @@ axh_s1.plot(tstarship, hstarship, color='green', linestyle=':')
 
 #############
 # next the descent part
-
-axv_s2 = fig.add_subplot(3, 2, 6)
+axv_s2 = fig.add_subplot(gs.new_subplotspec((2,1)))
 axv_s2.set_title('Starship (descent)')
 axv_s2.set_xlabel('Time [min]')
 axv_s2.set_xlim(60, 67)
