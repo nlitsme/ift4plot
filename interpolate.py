@@ -1,6 +1,11 @@
 import sys
 import re
 
+"""
+ - makes sure there is an entry for every second
+ - fills in the blanks by doing linear interpolation between known values.
+"""
+
 previx = None
 recs = []
 for line in sys.stdin:

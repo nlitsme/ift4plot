@@ -3,6 +3,15 @@ import matplotlib.pyplot as plt
 import sys
 import re
 
+"""
+Generate three plots:
+    - a graph with both booster and starship data, with the booster in slightly lighter colors.
+    - a graph showing only the booster data
+    - a split graph showing the boost/launch phase, and the descent/landing phase of starship.
+
+This last plot omits the 50 minutes where there are no interesting details in the plot.
+"""
+
 # 0 = time, 1 = vbooster, 2 = vstarship, 3 = hbooster, 4 = hstarship, 5 = abooster, 6 = astarship, 7 = notes
 recs = []
 for line in sys.stdin:
@@ -13,7 +22,6 @@ for line in sys.stdin:
     recs.append(fields)
 
 
-# Simulated speed data and time intervals
 #  time in minutes
 #  speed in kmh
 #  height in km
@@ -126,8 +134,8 @@ for ax in (axv_s1, axa_s1, axh_s1):
 for ax in (axv_s2, axa_s2, axh_s2):
     ax.spines['left'].set_visible(False)
 
+# add diagonal graph separation marks.
 d = .015
-
 kwargs = dict(transform=axv_s1.transAxes, color='k', clip_on=False)
 axv_s1.plot((1-d, 1+d), (-d, +d), **kwargs)
 axv_s1.plot((1-d, 1+d), (1-d, 1+d), **kwargs)
@@ -135,7 +143,6 @@ axv_s1.plot((1-d, 1+d), (1-d, 1+d), **kwargs)
 kwargs.update(transform=axv_s2.transAxes)
 axv_s2.plot((-d, +d), (1-d, 1+d), **kwargs)
 axv_s2.plot((-d, +d), (-d, +d), **kwargs)
-
 
 plt.show()
 

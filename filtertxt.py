@@ -1,5 +1,11 @@
 import sys
 import re
+"""
+reads the uneditted OCR output, and tries to extract any thing which looks like:
+    - a time stamp
+    - a speed
+    - an altitude
+"""
 
 def main():
     frames = []

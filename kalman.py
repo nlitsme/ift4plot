@@ -2,6 +2,11 @@ import numpy as np
 import sys
 import re
 
+"""
+outputs estimations for the actual velocity, and acceleration.
+calculated using a kalman filter.
+"""
+
 # 0 = fnum, 1 = time, 2 = vbooster, 3 = vstarship, 4 = hbooster, 5 = hstarship
 recs = []
 for line in sys.stdin:
@@ -11,7 +16,6 @@ for line in sys.stdin:
     recs.append(fields)
 
 
-# Simulated speed data and time intervals
 #  time in minutes
 #  speed in m/s
 #  height in km
@@ -60,6 +64,7 @@ def kalman(vmeas):
 vstarship, astarship = kalman(vstarship)
 vbooster, abooster = kalman(vbooster)
 
+# pad the booster columns with 'None', so the 'zip' will output full data for all items.
 nones = [None]*(len(vstarship)-len(vbooster))
 vbooster = list(vbooster) + nones
 abooster = list(abooster) + nones
