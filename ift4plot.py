@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 import sys
 import re
 
+split_starship_plot = True
+
 # 0 = time, 1 = vbooster, 2 = vstarship, 3 = hbooster, 4 = hstarship, 5 = abooster, 6 = astarship, 7 = notes
 recs = []
 for line in sys.stdin:
@@ -49,66 +51,92 @@ axh_b.set_ylabel('Height [km]', color='green')
 axh_b.plot(tbooster, hbooster, color='green', linestyle=':')
 axh_b.spines['right'].set_position(('axes', 1.08))
 
+if split_starship_plot:
 
-#############
-# next first starship plot
+    #############
+    # next the starship plot, split in two parts.
+    # excluding the 30 minute orbital, coasting part.
 
-axv_s1 = fig.add_subplot(2, 2, 3)
-axv_s1.set_title('Starship (boost)')
-axv_s1.set_xlabel('Time [min]')
-axv_s1.set_xlim(0, 10)
-axv_s1.set_ylabel('Velocity (kmh)', color='blue')
+    # first the launch/boost part
 
-axv_s1.plot(tstarship, vstarship, color='blue')
+    axv_s1 = fig.add_subplot(2, 2, 3)
+    axv_s1.set_title('Starship (boost)')
+    axv_s1.set_xlabel('Time [min]')
+    axv_s1.set_xlim(0, 10)
+    axv_s1.set_ylabel('Velocity (kmh)', color='blue')
 
-# second y axis
-axa_s1 = axv_s1.twinx()
-axa_s1.set_yticks([])
-axa_s1.plot(tstarship, astarship, color='red')
+    axv_s1.plot(tstarship, vstarship, color='blue')
 
-# third y axis
-axh_s1 = axv_s1.twinx()
-axh_s1.set_yticks([])
-axh_s1.plot(tstarship, hstarship, color='green', linestyle=':')
+    # second y axis
+    axa_s1 = axv_s1.twinx()
+    axa_s1.set_yticks([])
+    axa_s1.plot(tstarship, astarship, color='red')
+
+    # third y axis
+    axh_s1 = axv_s1.twinx()
+    axh_s1.set_yticks([])
+    axh_s1.plot(tstarship, hstarship, color='green', linestyle=':')
 
 
-#############
-# second startship plot
+    #############
+    # next the descent part
 
-axv_s2 = fig.add_subplot(2, 2, 4)
-axv_s2.set_title('Starship (descent)')
-axv_s2.set_xlabel('Time [min]')
-axv_s2.set_xlim(45, 67)
+    axv_s2 = fig.add_subplot(2, 2, 4)
+    axv_s2.set_title('Starship (descent)')
+    axv_s2.set_xlabel('Time [min]')
+    axv_s2.set_xlim(45, 67)
 
-axv_s2.plot(tstarship, vstarship, color='blue')
+    axv_s2.plot(tstarship, vstarship, color='blue')
 
-axv_s2.set_yticks([])
+    axv_s2.set_yticks([])
 
-# second y axis
-axa_s2 = axv_s2.twinx()
-axa_s2.set_ylabel('Acceleration [g]', color='red')
-axa_s2.plot(tstarship, astarship, color='red')
+    # second y axis
+    axa_s2 = axv_s2.twinx()
+    axa_s2.set_ylabel('Acceleration [g]', color='red')
+    axa_s2.plot(tstarship, astarship, color='red')
 
-# third y axis
-axh_s2 = axv_s2.twinx()
-axh_s2.set_ylabel('Height [km]', color='green')
-axh_s2.plot(tstarship, hstarship, color='green', linestyle=':')
-axh_s2.spines['right'].set_position(('axes', 1.16))
+    # third y axis
+    axh_s2 = axv_s2.twinx()
+    axh_s2.set_ylabel('Height [km]', color='green')
+    axh_s2.plot(tstarship, hstarship, color='green', linestyle=':')
+    axh_s2.spines['right'].set_position(('axes', 1.16))
 
-for ax in (axv_s1, axa_s1, axh_s1):
-    ax.spines['right'].set_visible(False)
-for ax in (axv_s2, axa_s2, axh_s2):
-    ax.spines['left'].set_visible(False)
+    for ax in (axv_s1, axa_s1, axh_s1):
+        ax.spines['right'].set_visible(False)
+    for ax in (axv_s2, axa_s2, axh_s2):
+        ax.spines['left'].set_visible(False)
 
-d = .015
+    d = .015
 
-kwargs = dict(transform=axv_s1.transAxes, color='k', clip_on=False)
-axv_s1.plot((1-d, 1+d), (-d, +d), **kwargs)
-axv_s1.plot((1-d, 1+d), (1-d, 1+d), **kwargs)
+    kwargs = dict(transform=axv_s1.transAxes, color='k', clip_on=False)
+    axv_s1.plot((1-d, 1+d), (-d, +d), **kwargs)
+    axv_s1.plot((1-d, 1+d), (1-d, 1+d), **kwargs)
 
-kwargs.update(transform=axv_s2.transAxes)
-axv_s2.plot((-d, +d), (1-d, 1+d), **kwargs)
-axv_s2.plot((-d, +d), (-d, +d), **kwargs)
+    kwargs.update(transform=axv_s2.transAxes)
+    axv_s2.plot((-d, +d), (1-d, 1+d), **kwargs)
+    axv_s2.plot((-d, +d), (-d, +d), **kwargs)
+
+else:
+    # starship as one plot, with the 30 minute coasting part.
+
+    axv_s = fig.add_subplot(2, 1, 2)
+    axv_s.set_title('Starship')
+    axv_s.set_xlabel('Time [min]')
+    axv_s.set_ylabel('Velocity (kmh)', color='blue')
+
+    axv_s.plot(tstarship, vstarship, color='blue')
+
+    # second y axis
+    axa_s = axv_s.twinx()
+    axa_s.set_ylabel('Acceleration [g]', color='red')
+    axa_s.plot(tstarship, astarship, color='red')
+
+    # third y axis
+    axh_s = axv_s.twinx()
+    axh_s.set_ylabel('Height [km]', color='green')
+    axh_s.plot(tstarship, hstarship, color='green', linestyle=':')
+    axh_s.spines['right'].set_position(('axes', 1.08))
+
 
 
 
