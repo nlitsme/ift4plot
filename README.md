@@ -41,16 +41,16 @@ of the booster+starship rocket.
     python3 interpolate.py < measurements.dat > interpolated.dat
 
 
-* used kalman.py to generate the plot
+* used kalman.py to estimate acceleration and speed from the measurements.
 
 NOTE that chatgpt wrote the kalman filter part for me.
 
-    python3 kalman.py < interpolated.dat
+    python3 kalman.py < interpolated.dat > estimated.dat
+
+* plot using ift4plot.py
+
+    python3 ift4plot.py < estimated.dat
 
 ![ift4 plot](ift4.png)
 
-
-## BUGS:
-
-* I somehow cannot get rid of the tickmarks in the bottom right plot.
 

@@ -1,5 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
 import sys
 import re
 
@@ -7,17 +6,21 @@ import re
 recs = []
 for line in sys.stdin:
     fields = re.split(r'\s+', line.strip())
-    fields = [None if _=='-' else int(_) for _ in fields[:6]] + [ 0, 0 ] + fields[6:]
+    fields = [None if _=='-' else int(_) for _ in fields[:6]] \
+            + [ " ".join(fields[6:]) ]
     recs.append(fields)
 
 
 # Simulated speed data and time intervals
 #  time in minutes
 #  speed in m/s
-tbooster = np.array([r[1]/60 for r in recs if r[2] is not None])
+#  height in km
 vbooster = np.array([r[2]/3.6 for r in recs if r[2] is not None])
-tstarship = np.array([r[1]/60 for r in recs if r[3] is not None])
+hbooster = np.array([r[4] for r in recs if r[4] is not None])
+tstarship = np.array([r[1] for r in recs if r[3] is not None])
 vstarship = np.array([r[3]/3.6 for r in recs if r[3] is not None])
+hstarship = np.array([r[5] for r in recs if r[5] is not None])
+notes = [r[6] for r in recs]
 
 def kalman(vmeas):
     # Kalman filter parameters
@@ -57,58 +60,13 @@ def kalman(vmeas):
 vstarship, astarship = kalman(vstarship)
 vbooster, abooster = kalman(vbooster)
 
-# Plot results
-fig = plt.figure()
-fig.subplots_adjust(wspace=0.08)
+nones = [None]*(len(vstarship)-len(vbooster))
+vbooster = list(vbooster) + nones
+abooster = list(abooster) + nones
+hbooster = list(hbooster) + nones
 
-#############
-# at the top, the booster plot
-axv_b = fig.add_subplot(2, 1, 1)
-axv_b.set_title('Booster')
-axv_b.set_xlabel('Time [min]')
-axv_b.set_ylabel('Velocity (kmh)', color='blue')
-axv_b.plot(tbooster, vbooster, label='speed', color='blue')
-axa_b = axv_b.twinx()
-axa_b.set_ylabel('Accel [g]', color='red')
-axa_b.plot(tbooster, abooster, label='accel', color='red')
-
-#############
-# next first starship plot
-
-axv_s1 = fig.add_subplot(2, 2, 3)
-axv_s1.set_title('Starship')
-axv_s1.set_xlabel('Time [min]')
-axv_s1.set_xlim(0, 10)
-axv_s1.set_ylabel('Velocity (kmh)', color='blue')
-
-axv_s1.plot(tstarship, vstarship, label='speed', color='blue')
-
-axa_s1 = axv_s1.twinx()
-axa_s1.tick_params(axis='y', which='both', right=False, labelright=False)
-axa_s1.plot(tstarship, astarship, label='accel', color='red')
-
-#############
-# second startship plot
-
-axv_s2 = fig.add_subplot(2, 2, 4, sharey=axv_s1)
-axv_s2.set_title('Starship')
-axv_s2.set_xlabel('Time [min]')
-axv_s2.set_xlim(45, 67)
-
-axv_s2.plot(tstarship, vstarship, label='speed', color='blue')
-
-# TODO: this somehow does not remove the tickmarks.
-axv_s2.tick_params(axis='y', which='both', left=False, labelleft=False)
-axv_s2.yaxis.set_ticks_position('none')
-
-axa_s2 = axv_s2.twinx()
-axa_s2.set_ylabel('Accel [g]', color='red')
-axa_s2.plot(tstarship, astarship, label='accel', color='red')
-
-#axa_s1.spines['right'].set_visible(False)
-#axv_s1.spines['right'].set_visible(False)
-#axa_s2.spines['left'].set_visible(False)
-#axv_s2.spines['left'].set_visible(False)
-
-plt.show()
+for fields in zip(tstarship, vbooster, vstarship, hbooster, hstarship, abooster, astarship, notes, strict=True):
+    print("".join("        -" if x is None else f"{x:>9.0f}" for x in fields[:5]), end="")
+    print("".join("        -" if x is None else f"{x:>9.4f}" for x in fields[5:7]), end="")
+    print("   ", fields[7])
 
