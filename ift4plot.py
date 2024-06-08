@@ -18,11 +18,11 @@ for line in sys.stdin:
 #  speed in m/s
 #  height in km
 tbooster = np.array([r[0]/60 for r in recs if r[1] is not None])
-vbooster = np.array([r[1]/3.6 for r in recs if r[1] is not None])
+vbooster = np.array([r[1] for r in recs if r[1] is not None])
 hbooster = np.array([r[3] for r in recs if r[3] is not None])
 abooster = np.array([r[5] for r in recs if r[5] is not None])
 tstarship = np.array([r[0]/60 for r in recs if r[2] is not None])
-vstarship = np.array([r[2]/3.6 for r in recs if r[2] is not None])
+vstarship = np.array([r[2] for r in recs if r[2] is not None])
 hstarship = np.array([r[4] for r in recs if r[4] is not None])
 astarship = np.array([r[6] for r in recs if r[6] is not None])
 
