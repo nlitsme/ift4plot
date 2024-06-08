@@ -17,7 +17,7 @@ for line in sys.stdin:
 
 # Simulated speed data and time intervals
 #  time in minutes
-#  speed in m/s
+#  speed in kmh
 #  height in km
 tbooster = np.array([r[0]/60 for r in recs if r[1] is not None])
 vbooster = np.array([r[1] for r in recs if r[1] is not None])
